@@ -134,8 +134,13 @@
       #slide-wordcloud > div { grid-template-columns: 1fr !important; height: auto !important; }
       #wc-canvas { height: 220px !important; }
 
-      /* 投票按鈕字級 */
-      #poll-options button { font-size: 0.6em !important; }
+      /* 投票按鈕：縮小字級內距、進度條變窄，5 個選項全顯示 */
+      #slide-poll .lead { display: none; }
+      #poll-options { gap: 8px !important; }
+      .poll-btn { font-size: 0.52em !important; padding: 9px 12px !important; }
+      .poll-btn .poll-label { line-height: 1.25; }
+      .poll-btn .poll-bar-wrap { flex: 0 0 60px !important; }
+      .poll-btn .poll-check { flex: 0 0 20px !important; height: 20px !important; }
 
       /* VIZ 區塊內字級 */
       #viz-before div, #viz-after div { font-size: 0.85em; }
@@ -442,11 +447,11 @@
 <script>
 (function(){
   const OPTIONS = [
-    { id:'sort',  label:'1S 整理 — 太多用不到的東西堆著' },
-    { id:'set',   label:'2S 整頓 — 東西沒定位、常找不到' },
-    { id:'shine', label:'3S 清掃 — 設備油垢、清潔不到位' },
-    { id:'std',   label:'4S 清潔 — 沒標準、靠各自記憶' },
-    { id:'sus',   label:'5S 素養 — 做一陣子就鬆懈了' },
+    { id:'sort',  label:'1S 整理｜用不到的東西太多' },
+    { id:'set',   label:'2S 整頓｜常找不到東西' },
+    { id:'shine', label:'3S 清掃｜設備清潔不到位' },
+    { id:'std',   label:'4S 清潔｜沒標準靠記憶' },
+    { id:'sus',   label:'5S 素養｜做久就鬆懈' },
   ];
   const counts = {}; OPTIONS.forEach(o => counts[o.id] = 0);
   let myVote = null;
@@ -454,15 +459,16 @@
   OPTIONS.forEach(opt => {
     const btn = document.createElement('button');
     btn.id = `poll-btn-${opt.id}`;
+    btn.className = 'poll-btn';
     btn.innerHTML = `
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span style="flex:0 0 24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="poll-check" style="flex:0 0 22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);
                      display:flex;align-items:center;justify-content:center;font-size:12px;" id="poll-check-${opt.id}"></span>
-        <span style="flex:1;text-align:left;">${opt.label}</span>
-        <span style="flex:0 0 120px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
+        <span class="poll-label" style="flex:1;text-align:left;">${opt.label}</span>
+        <span class="poll-bar-wrap" style="flex:0 0 100px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
           <div id="poll-bar-${opt.id}" style="height:100%;width:0;background:var(--accent2);border-radius:4px;transition:width 0.4s;"></div>
         </span>
-        <span id="poll-pct-${opt.id}" style="flex:0 0 36px;text-align:right;font-size:0.75em;color:#888;">0%</span>
+        <span id="poll-pct-${opt.id}" style="flex:0 0 34px;text-align:right;font-size:0.75em;color:#888;">0%</span>
       </div>`;
     btn.style.cssText = `width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);
       border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;
