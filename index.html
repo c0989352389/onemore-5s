@@ -102,6 +102,44 @@
 
     /* SVG icon 統一光暈 */
     .sicon { filter: drop-shadow(0 0 8px rgba(79,195,247,0.55)); }
+
+    /* === 手機瀏覽模式（直式窄螢幕）=== */
+    @media (max-width: 768px), (orientation: portrait) {
+      .reveal h1 { font-size: 1.5em; }
+      .reveal h2 { font-size: 1.05em; }
+      .lead { font-size: 0.7em; }
+
+      /* 五個 S：橫排改直排 */
+      .fivebar { flex-direction: column; gap: 8px; }
+      .fivebar .sbox { display: flex; align-items: center; gap: 14px; padding: 12px 14px; text-align: left; }
+      .fivebar .sbox .sicon { margin: 0; flex: 0 0 36px; width: 36px; height: 36px; }
+      .fivebar .sbox .sname { font-size: 0.6em; }
+      .fivebar .sbox .seng { font-size: 0.42em; margin-top: 0; }
+
+      /* 各 S 內頁標題 */
+      .s-header .num { flex: 0 0 48px; height: 48px; font-size: 1.05em; border-radius: 10px; }
+      .s-header .ttl .zh { font-size: 0.95em; }
+      .s-header .ttl .en { font-size: 0.42em; }
+      .point-list { font-size: 0.62em; }
+      .point-list li { padding: 8px 12px; }
+      .example-box { font-size: 0.55em; }
+
+      /* 雙欄／三欄改單欄堆疊 */
+      .check-grid, .steps { grid-template-columns: 1fr; }
+      .check-col ul { font-size: 0.55em; }
+      .step-card .stitle { font-size: 0.7em; }
+      .step-card .sdesc { font-size: 0.52em; }
+
+      /* 文字雲頁：左右改上下 */
+      #slide-wordcloud > div { grid-template-columns: 1fr !important; height: auto !important; }
+      #wc-canvas { height: 220px !important; }
+
+      /* 投票按鈕字級 */
+      #poll-options button { font-size: 0.6em !important; }
+
+      /* VIZ 區塊內字級 */
+      #viz-before div, #viz-after div { font-size: 0.85em; }
+    }
   </style>
 </head>
 <body>
