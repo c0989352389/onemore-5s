@@ -410,8 +410,22 @@
 <script>
   Reveal.initialize({
     hash:true, transition:'slide', backgroundTransition:'fade',
+    width:960, height:700, margin:0.04, minScale:0.2, maxScale:1.6,
     center:true, progress:true, controls:true, slideNumber:'c/t', plugins:[]
   });
+  // 手機：縮小設計尺寸讓縮放比接近 1，字才清楚；關閉垂直置中消除留白
+  function applyResponsive(){
+    var mobile = window.matchMedia('(max-width: 768px)').matches
+                 || window.innerHeight > window.innerWidth;
+    if (mobile) {
+      Reveal.configure({ width:430, height:580, margin:0.03, center:false });
+    } else {
+      Reveal.configure({ width:960, height:700, margin:0.04, center:true });
+    }
+  }
+  applyResponsive();
+  window.addEventListener('resize', applyResponsive);
+  Reveal.on('ready', applyResponsive);
   // VIZ 滑桿
   (function(){
     var s=document.getElementById('viz-slider');
