@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>萬磨 5S 現場管理</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/night.css" />
+  <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
+  <style>
+    :root {
+      --accent:  #e8643a;
+      --accent2: #4fc3f7;
+      --success: #81c784;
+      --warn:    #ffb74d;
+    }
+    .reveal { font-family: 'Segoe UI', 'Noto Sans TC', sans-serif; }
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: 'Segoe UI', 'Noto Sans TC', sans-serif;
+      font-weight: 700; letter-spacing: -0.02em;
+    }
+    .reveal h1 { font-size: 2.1em; }
+    .reveal h2 { font-size: 1.4em; color: var(--accent2); }
+    .reveal .progress { color: var(--accent); }
+    .reveal section { text-align: left; }
+
+    /* 漸層背景（取代 AI 底圖） */
+    .bg-cover  { background: radial-gradient(circle at 30% 30%, #1c2a4a 0%, #0d1117 70%); }
+    .bg-why    { background: radial-gradient(circle at 70% 40%, #3a1c1c 0%, #0d1117 70%); }
+    .bg-ending { background: radial-gradient(circle at 50% 60%, #133a3f 0%, #0d1117 70%); }
+
+    /* 封面 */
+    .title-slide { text-align: center; }
+    .title-slide .tag {
+      display:inline-block; background:var(--accent); color:#fff;
+      padding:4px 14px; border-radius:20px; font-size:0.5em;
+      letter-spacing:0.08em; margin-bottom:0.8em; font-weight:600;
+    }
+    .title-slide .subtitle { font-size:0.7em; color:#aaa; margin-top:0.5em; }
+    .title-slide .author { margin-top:2em; font-size:0.45em; color:#888; }
+
+    /* 5S 大字 */
+    .fivebar { display:flex; gap:10px; justify-content:center; margin-top:1em; }
+    .fivebar .sbox {
+      flex:1; background:rgba(255,255,255,0.05); border-top:4px solid var(--accent2);
+      border-radius:10px; padding:18px 8px; text-align:center;
+    }
+    .fivebar .sbox .sicon { width:48px; height:48px; margin:0 auto 8px; display:block; }
+    .fivebar .sbox .sname { font-size:0.46em; font-weight:700; color:var(--accent2); }
+    .fivebar .sbox .seng { font-size:0.32em; color:#888; margin-top:2px; }
+
+    /* 內容區塊 */
+    .lead { font-size:0.6em; color:#bbb; margin-bottom:0.6em; }
+    .s-header { display:flex; align-items:center; gap:16px; margin-bottom:0.4em; }
+    .s-header .num {
+      flex:0 0 64px; height:64px; border-radius:14px; background:var(--accent);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.4em; font-weight:900; color:#fff;
+    }
+    .s-header .ttl .zh { font-size:1.1em; font-weight:800; color:#fff; }
+    .s-header .ttl .en { font-size:0.5em; color:var(--accent2); letter-spacing:0.05em; }
+    .point-list { list-style:none; padding:0; margin:0.6em 0 0; font-size:0.5em; }
+    .point-list li {
+      padding:10px 14px; margin-bottom:8px; background:rgba(255,255,255,0.05);
+      border-left:4px solid var(--accent2); border-radius:6px; color:#ddd; line-height:1.5;
+    }
+    .point-list li b { color:var(--accent); }
+    .example-box {
+      margin-top:0.6em; font-size:0.42em; color:#9fd8ef;
+      background:rgba(79,195,247,0.1); border:1px solid rgba(79,195,247,0.3);
+      border-radius:8px; padding:12px 16px; line-height:1.6;
+    }
+    .example-box .et { color:var(--accent2); font-weight:700; margin-right:6px; }
+
+    /* 點檢雙欄 */
+    .check-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:0.6em; }
+    .check-col { background:rgba(255,255,255,0.05); border-radius:10px; padding:18px; }
+    .check-col h3 { font-size:0.6em; margin:0 0 10px; }
+    .check-col.store h3 { color:var(--accent2); }
+    .check-col.kitchen h3 { color:var(--warn); }
+    .check-col ul { list-style:none; padding:0; margin:0; font-size:0.42em; color:#ccc; line-height:1.9; }
+    .check-col ul li::before { content:"☐ "; color:var(--accent); }
+
+    /* 三步驟 */
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:0.8em; }
+    .step-card { background:rgba(255,255,255,0.05); border-radius:12px; padding:20px; text-align:center; }
+    .step-card .sicon { width:60px; height:60px; margin:0 auto 10px; display:block; }
+    .step-card .stitle { font-size:0.55em; font-weight:700; color:var(--accent2); margin-bottom:6px; }
+    .step-card .sdesc { font-size:0.4em; color:#bbb; line-height:1.6; }
+    .step-card .snum { font-size:0.34em; color:var(--accent); font-weight:700; letter-spacing:0.1em; }
+
+    .end-slide { text-align:center; }
+    .end-slide h1 { color:var(--accent2); }
+    .end-slide .tagline { font-size:0.6em; color:#aaa; margin-top:0.4em; }
+    .end-slide .slogan {
+      display:inline-block; margin-top:1em; font-size:0.7em; font-weight:800; color:#fff;
+      background:var(--accent); padding:10px 28px; border-radius:30px;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
+
+    /* SVG icon 統一光暈 */
+    .sicon { filter: drop-shadow(0 0 8px rgba(79,195,247,0.55)); }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 1 封面 -->
+    <section class="bg-cover">
+      <div class="title-slide">
+        <div class="tag">全員教育訓練 · 現場管理</div>
+        <h1>萬磨 5S 現場管理</h1>
+        <h2 style="color:var(--accent); margin-top:0.2em;">整理・整頓・清掃・清潔・素養</h2>
+        <p class="subtitle">乾淨、有序、安全的工作現場，從每個人開始</p>
+        <p class="author">萬磨腸粉　門市 × 央廚　全員適用</p>
+      </div>
+    </section>
+
+    <!-- 2 為什麼要做 5S -->
+    <section class="bg-why">
+      <h2>為什麼要做 5S？</h2>
+      <p class="lead">髒亂的現場，每天都在偷走我們的時間、品質與安全。</p>
+      <ul class="point-list">
+        <li>🔍 <b>找東西浪費時間</b>：東西沒定位，每次找醬料、找工具都在耗時間、耗人力。</li>
+        <li>🦠 <b>食安風險</b>：殘渣、油垢、過期備料 = 客訴與稽核紅燈，砸的是招牌。</li>
+        <li>😤 <b>客訴與心情</b>：客人看到的不只是餐點，是整個現場給的信任感。</li>
+        <li>💸 <b>看不見的成本</b>：報廢、重做、找不到、做白工，全是錢。</li>
+      </ul>
+      <div class="example-box"><span class="et">一句話</span>5S 不是大掃除，是讓「對的狀態」變成每天的習慣。</div>
+    </section>
+
+    <!-- 3 5S 是什麼 -->
+    <section>
+      <h2>5S 是什麼？</h2>
+      <p class="lead">日本現場管理的五個步驟，五個字都從「S」開頭。</p>
+      <div class="fivebar">
+        <div class="sbox">
+          <svg class="sicon" viewBox="0 0 48 48" fill="none" stroke="#4fc3f7" stroke-width="2.5"><path d="M8 14h14M8 24h14M8 34h14"/><path d="M30 12l10 10M40 12L30 22" stroke="#e8643a"/></svg>
+          <div class="sname">整理</div><div class="seng">Sort</div>
+        </div>
+        <div class="sbox">
+          <svg class="sicon" viewBox="0 0 48 48" fill="none" stroke="#4fc3f7" stroke-width="2.5"><rect x="8" y="10" width="32" height="9" rx="2"/><rect x="8" y="28" width="32" height="9" rx="2"/><circle cx="14" cy="14.5" r="1.5" fill="#e8643a" stroke="none"/><circle cx="14" cy="32.5" r="1.5" fill="#e8643a" stroke="none"/></svg>
+          <div class="sname">整頓</div><div class="seng">Set</div>
+        </div>
+        <div class="sbox">
+          <svg class="sicon" viewBox="0 0 48 48" fill="none" stroke="#4fc3f7" stroke-width="2.5"><path d="M14 34l8-8 8 8"/><path d="M30 20l6-6"/><path d="M34 10l4 4-3 3-4-4z" fill="#e8643a" stroke="none"/></svg>
+          <div class="sname">清掃</div><div class="seng">Shine</div>
+        </div>
+        <div class="sbox">
+          <svg class="sicon" viewBox="0 0 48 48" fill="none" stroke="#4fc3f7" stroke-width="2.5"><rect x="12" y="8" width="24" height="32" rx="2"/><path d="M17 18h14M17 25h14M17 32h9"/><path d="M30 14l3 3 5-5" stroke="#e8643a"/></svg>
+          <div class="sname">清潔</div><div class="seng">Standardize</div>
+        </div>
+        <div class="sbox">
+          <svg class="sicon" viewBox="0 0 48 48" fill="none" stroke="#4fc3f7" stroke-width="2.5"><circle cx="24" cy="16" r="6"/><path d="M14 38c0-6 4-10 10-10s10 4 10 10"/><path d="M33 9l2 2 4-4" stroke="#e8643a"/></svg>
+          <div class="sname">素養</div><div class="seng">Sustain</div>
+        </div>
+      </div>
+      <div class="example-box" style="margin-top:1em;"><span class="et">順序</span>前 3S 動手做，4S 把它變標準，5S 讓全員養成習慣——缺一不可。</div>
+    </section>
+
+    <!-- 4 1S 整理 -->
+    <section>
+      <div class="s-header">
+        <div class="num">1S</div>
+        <div class="ttl"><div class="zh">整理</div><div class="en">SORT　區分要與不要</div></div>
+      </div>
+      <ul class="point-list">
+        <li><b>判斷標準：</b>三個月內會用到嗎？不會 → 就該清掉或移走。</li>
+        <li><b>動作：</b>用不到的器具、過期備料、壞掉的工具，當場處理掉。</li>
+        <li><b>重點：</b>留在現場的，只有「現在會用到的東西」。</li>
+      </ul>
+      <div class="example-box"><span class="et">腸粉現場</span>冷藏庫先清過期醬料與備料；備料台只留今天班次要用的，其餘收倉庫。</div>
+    </section>
+
+    <!-- 5 2S 整頓 -->
+    <section>
+      <div class="s-header">
+        <div class="num">2S</div>
+        <div class="ttl"><div class="zh">整頓</div><div class="en">SET IN ORDER　定位・定量・定標示</div></div>
+      </div>
+      <ul class="point-list">
+        <li><b>定位：</b>每樣東西都有固定的家，用完歸位。</li>
+        <li><b>定量：</b>該放多少就放多少，不囤積、不缺料。</li>
+        <li><b>定標示：</b>貼標籤、畫定位線，新人也找得到。</li>
+      </ul>
+      <div class="example-box"><span class="et">腸粉現場</span>醬料瓶貼名稱、器具掛架定位、米漿桶標示日期；找東西 3 秒內到手。</div>
+    </section>
+
+    <!-- 6 3S 清掃 -->
+    <section>
+      <div class="s-header">
+        <div class="num">3S</div>
+        <div class="ttl"><div class="zh">清掃</div><div class="en">SHINE　邊用邊清・設備保養</div></div>
+      </div>
+      <ul class="point-list">
+        <li><b>邊用邊清：</b>不要等下班才掃，髒了就處理。</li>
+        <li><b>設備保養：</b>清掃同時檢查設備有沒有壞、有沒有漏。</li>
+        <li><b>責任區：</b>每個區域有人負責，不留死角。</li>
+      </ul>
+      <div class="example-box"><span class="et">腸粉現場</span><b>瓦斯爐</b>清油垢並檢查火力、<b>水槽</b>清濾網保持排水順暢、<b>蒸爐</b>每日清水垢與殘渣。</div>
+    </section>
+
+    <!-- 7 4S 清潔 -->
+    <section>
+      <div class="s-header">
+        <div class="num">4S</div>
+        <div class="ttl"><div class="zh">清潔</div><div class="en">STANDARDIZE　把前 3S 變標準</div></div>
+      </div>
+      <ul class="point-list">
+        <li><b>標準化：</b>把整理、整頓、清掃的做法寫成 SOP 與點檢表。</li>
+        <li><b>看板化：</b>定位圖、清潔表貼在現場，狀態一目瞭然。</li>
+        <li><b>不靠記憶：</b>誰來做都一樣，不因換班、換人就走樣。</li>
+      </ul>
+      <div class="example-box"><span class="et">腸粉現場</span>每日清潔點檢表掛牆上，做完打勾簽名；定位圖貼在器具架上方。</div>
+    </section>
+
+    <!-- 8 5S 素養 -->
+    <section>
+      <div class="s-header">
+        <div class="num">5S</div>
+        <div class="ttl"><div class="zh">素養</div><div class="en">SUSTAIN　養成習慣・每日落實</div></div>
+      </div>
+      <ul class="point-list">
+        <li><b>養成習慣：</b>5S 不是活動，是每天自然在做的事。</li>
+        <li><b>晨會提醒：</b>開店前快速確認現場狀態。</li>
+        <li><b>定期稽核：</b>主管不定期檢查，好的表揚、缺的改善。</li>
+      </ul>
+      <div class="example-box"><span class="et">腸粉現場</span>晨會花 2 分鐘看點檢表；每週主管巡店打分，前 3S 自然就維持住了。</div>
+    </section>
+
+    <!-- 9 投票 -->
+    <section id="slide-poll">
+      <h2>你的現場，最缺哪個 S？</h2>
+      <p class="lead">誠實投一票，待會我們一起看大家的答案。</p>
+      <div id="poll-options" style="display:flex; flex-direction:column; gap:10px; margin-top:0.6em;"></div>
+      <div style="font-size:0.38em; color:#666; text-align:center; margin-top:0.8em;">
+        已投票：<span id="poll-total">0</span> 人
+      </div>
+    </section>
+
+    <!-- 10 VIZ 前後對比 -->
+    <section>
+      <h2>同一個備料台，差在哪？</h2>
+      <p class="lead">拖曳下方滑桿，看 5S 前後的差別。</p>
+      <div style="position:relative; height:360px; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.1);">
+        <div id="viz-before" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+             background:linear-gradient(135deg,#3a2418,#2a1a10); color:#e0a;">
+          <div style="text-align:center; color:#ffb4a0;">
+            <div style="font-size:2.4em;">🍳🧴🥄🧂📦</div>
+            <div style="font-size:0.5em; margin-top:12px; color:#ff8a65; font-weight:700;">5S 前：東西亂放、找不到、油垢殘渣</div>
+            <div style="font-size:0.38em; margin-top:6px; color:#cba;">每次備料都在翻找，紅單一張接一張</div>
+          </div>
+        </div>
+        <div id="viz-after" style="position:absolute; inset:0; clip-path:inset(0 100% 0 0); display:flex; align-items:center; justify-content:center;
+             background:linear-gradient(135deg,#0f2e33,#0a1f22);">
+          <div style="text-align:center; color:#9fe;">
+            <div style="font-size:2.4em;">🧴｜🥄｜🧂｜📦</div>
+            <div style="font-size:0.5em; margin-top:12px; color:#4fc3f7; font-weight:700;">5S 後：定位定量、標示清楚、檯面乾淨</div>
+            <div style="font-size:0.38em; margin-top:6px; color:#bdf;">3 秒拿到、人人會找、稽核過關</div>
+          </div>
+        </div>
+        <div id="viz-divider" style="position:absolute; top:0; left:0; width:3px; height:100%;
+             background:linear-gradient(to bottom,transparent,#4fc3f7,transparent);
+             box-shadow:0 0 12px #4fc3f7; pointer-events:none;"></div>
+      </div>
+      <input id="viz-slider" type="range" min="0" max="100" value="0"
+             style="width:100%; margin-top:16px; accent-color:#4fc3f7;">
+    </section>
+
+    <!-- 11 推行三步驟 -->
+    <section>
+      <h2>萬磨 5S 推行三步驟</h2>
+      <div class="steps">
+        <div class="step-card">
+          <svg class="sicon" viewBox="0 0 48 48" fill="none" stroke="#4fc3f7" stroke-width="2.5"><path d="M10 20v8l18 8V12z"/><path d="M28 16h6v16h-6" stroke="#e8643a"/><path d="M38 18c3 2 3 8 0 12" stroke="#e8643a"/></svg>
+          <div class="snum">STEP 1</div>
+          <div class="stitle">宣導</div>
+          <div class="sdesc">全員教育訓練，讓大家懂 5S 是什麼、為什麼要做。</div>
+        </div>
+        <div class="step-card">
+          <svg class="sicon" viewBox="0 0 48 48" fill="none" stroke="#4fc3f7" stroke-width="2.5"><path d="M12 36l8-20M20 16l4 2"/><path d="M30 10l8 8-14 18-8-8z" stroke="#e8643a"/><path d="M8 40h12"/></svg>
+          <div class="snum">STEP 2</div>
+          <div class="stitle">全員大掃除</div>
+          <div class="sdesc">先一起把現場做到位，定出標準狀態當基準。</div>
+        </div>
+        <div class="step-card">
+          <svg class="sicon" viewBox="0 0 48 48" fill="none" stroke="#4fc3f7" stroke-width="2.5"><circle cx="20" cy="20" r="10"/><path d="M28 28l10 10" stroke="#e8643a"/><path d="M16 20h8M20 16v8"/></svg>
+          <div class="snum">STEP 3</div>
+          <div class="stitle">定期稽核</div>
+          <div class="sdesc">主管定期巡查打分，好的表揚、缺的改善，持續維持。</div>
+        </div>
+      </div>
+      <div class="example-box" style="margin-top:1em;"><span class="et">關鍵</span>做一次不難，難在「維持」——靠的是標準（4S）＋習慣（5S）。</div>
+    </section>
+
+    <!-- 12 每日點檢重點 -->
+    <section>
+      <h2>每日 5S 點檢重點</h2>
+      <div class="check-grid">
+        <div class="check-col store">
+          <h3>🏪 門市</h3>
+          <ul>
+            <li>備料台定位、檯面無殘渣</li>
+            <li>醬料／器具歸位、標示清楚</li>
+            <li>客用區乾淨、地面無油水</li>
+          </ul>
+        </div>
+        <div class="check-col kitchen">
+          <h3>🍳 央廚</h3>
+          <ul>
+            <li>瓦斯爐、水槽、蒸爐清潔保養</li>
+            <li>冷藏冷凍無過期、標日期</li>
+            <li>生產線收尾歸位、地面清掃</li>
+          </ul>
+        </div>
+      </div>
+      <div class="example-box" style="margin-top:1em;"><span class="et">提醒</span>做完打勾簽名，缺漏當場補——點檢表不是形式，是責任。</div>
+    </section>
+
+    <!-- 13 文字雲 -->
+    <section id="slide-wordcloud">
+      <h2 style="font-size:1.1em; margin-bottom:0.3em;">你想先改善哪一個地方？</h2>
+      <div style="display:grid; grid-template-columns:250px 1fr; gap:14px; height:440px;">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="background:rgba(255,255,255,0.06); border-radius:10px; padding:14px;">
+            <div style="font-size:0.36em; color:var(--accent2); font-weight:700; margin-bottom:8px;">輸入你的答案</div>
+            <input id="wc-input" type="text" placeholder="例：冷藏庫、瓦斯爐…" maxlength="20"
+              style="width:100%; padding:8px 12px; border-radius:8px; border:1px solid rgba(79,195,247,0.3);
+                     background:rgba(255,255,255,0.08); color:#fff; font-size:13px;
+                     box-sizing:border-box; font-family:inherit; outline:none;" />
+            <button id="wc-btn"
+              style="width:100%; margin-top:8px; padding:9px; background:var(--accent2); color:#0d1117;
+                     border:none; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">送出 ↵</button>
+          </div>
+          <div style="background:rgba(255,255,255,0.06); border-radius:10px; padding:14px; flex:1; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="font-size:0.36em; color:var(--accent2); font-weight:700; margin-bottom:8px;">熱門答案
+              <span style="display:inline-block; background:#ff4757; color:#fff; padding:2px 7px; border-radius:10px; font-size:0.85em; animation:pulse 1.5s infinite;">LIVE</span>
+            </div>
+            <div id="wc-list" style="font-size:0.32em; overflow-y:auto; flex:1; color:#ccc;"></div>
+            <div style="margin-top:8px; font-size:0.3em; color:#666; border-top:1px solid rgba(255,255,255,0.08); padding-top:6px;">
+              總提交：<span id="wc-total" style="color:var(--accent); font-weight:700;">0</span>
+              不同答案：<span id="wc-unique" style="color:var(--accent2); font-weight:700;">0</span>
+            </div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04); border-radius:12px; overflow:hidden; position:relative; border:1px solid rgba(255,255,255,0.07);">
+          <canvas id="wc-canvas" style="width:100%; height:100%; display:block;"></canvas>
+          <div id="wc-empty" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#444; font-size:0.42em; text-align:center; pointer-events:none; line-height:2;">
+            輸入第一個答案<br>文字雲就會出現 ✨
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14 結尾 -->
+    <section class="bg-ending">
+      <div class="end-slide">
+        <h1>5S 從現在、從我開始</h1>
+        <p class="tagline">乾淨的現場，是品質與安全的第一道防線。</p>
+        <div class="slogan">用完歸位 · 邊用邊清 · 天天落實</div>
+        <p class="tagline" style="margin-top:1.4em; font-size:0.5em;">今天下班前，先選一個地方，把它做到位。</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash:true, transition:'slide', backgroundTransition:'fade',
+    center:true, progress:true, controls:true, slideNumber:'c/t', plugins:[]
+  });
+  // VIZ 滑桿
+  (function(){
+    var s=document.getElementById('viz-slider');
+    if(!s) return;
+    s.addEventListener('input', function(){
+      var v=+this.value;
+      document.getElementById('viz-after').style.clipPath='inset(0 '+(100-v)+'% 0 0)';
+      document.getElementById('viz-divider').style.left=v+'%';
+    });
+  })();
+</script>
+
+<!-- 投票（本機本地版，無後端） -->
+<script>
+(function(){
+  const OPTIONS = [
+    { id:'sort',  label:'1S 整理 — 太多用不到的東西堆著' },
+    { id:'set',   label:'2S 整頓 — 東西沒定位、常找不到' },
+    { id:'shine', label:'3S 清掃 — 設備油垢、清潔不到位' },
+    { id:'std',   label:'4S 清潔 — 沒標準、靠各自記憶' },
+    { id:'sus',   label:'5S 素養 — 做一陣子就鬆懈了' },
+  ];
+  const counts = {}; OPTIONS.forEach(o => counts[o.id] = 0);
+  let myVote = null;
+  const container = document.getElementById('poll-options');
+  OPTIONS.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.id = `poll-btn-${opt.id}`;
+    btn.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="flex:0 0 24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);
+                     display:flex;align-items:center;justify-content:center;font-size:12px;" id="poll-check-${opt.id}"></span>
+        <span style="flex:1;text-align:left;">${opt.label}</span>
+        <span style="flex:0 0 120px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
+          <div id="poll-bar-${opt.id}" style="height:100%;width:0;background:var(--accent2);border-radius:4px;transition:width 0.4s;"></div>
+        </span>
+        <span id="poll-pct-${opt.id}" style="flex:0 0 36px;text-align:right;font-size:0.75em;color:#888;">0%</span>
+      </div>`;
+    btn.style.cssText = `width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;
+      font-size:0.46em;cursor:pointer;font-family:inherit;text-align:left;`;
+    btn.onclick = () => vote(opt.id);
+    container.appendChild(btn);
+  });
+  function vote(optId) {
+    if (myVote === optId) return;
+    if (myVote) counts[myVote]--;
+    myVote = optId; counts[optId]++;
+    render();
+  }
+  function render() {
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    document.getElementById('poll-total').textContent = total;
+    OPTIONS.forEach(opt => {
+      const pct = total > 0 ? Math.round((counts[opt.id] / total) * 100) : 0;
+      document.getElementById(`poll-bar-${opt.id}`).style.width = pct + '%';
+      document.getElementById(`poll-pct-${opt.id}`).textContent = pct + '%';
+      const check = document.getElementById(`poll-check-${opt.id}`);
+      if (myVote === opt.id) { check.textContent='✓'; check.style.background='var(--accent2)'; check.style.borderColor='var(--accent2)'; }
+      else { check.textContent=''; check.style.background='transparent'; check.style.borderColor='rgba(255,255,255,0.3)'; }
+    });
+  }
+})();
+</script>
+
+<!-- 文字雲（本機本地版，無後端） -->
+<script>
+(function(){
+  const COLORS = ['#4fc3f7','#e8643a','#ffb74d','#81c784','#ce93d8','#80deea','#f48fb1'];
+  let words = []; let wcData = [];
+  window.wcSubmit = function() {
+    const input = document.getElementById('wc-input');
+    const word = input.value.trim(); if (!word) return;
+    words.push(word); input.value = '';
+    const counts = {}; words.forEach(w => counts[w] = (counts[w] || 0) + 1);
+    wcData = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    document.getElementById('wc-total').textContent = words.length;
+    document.getElementById('wc-unique').textContent = wcData.length;
+    const listEl = document.getElementById('wc-list');
+    listEl.innerHTML = wcData.slice(0, 12).map(([w, c]) =>
+      `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+        <span>${w}</span><span style="color:var(--accent);font-weight:700;">${c}</span></div>`).join('')
+      || '<div style="color:#555;padding:8px 0;">尚無資料</div>';
+    const empty = document.getElementById('wc-empty'); if (empty) empty.style.display = wcData.length > 0 ? 'none' : '';
+    drawWordCloud();
+  };
+  document.getElementById('wc-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') window.wcSubmit(); });
+  document.getElementById('wc-btn')?.addEventListener('click', window.wcSubmit);
+  function drawWordCloud() {
+    const canvas = document.getElementById('wc-canvas');
+    if (!canvas || typeof WordCloud === 'undefined') return;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width < 10 || rect.height < 10) return;
+    canvas.width = rect.width; canvas.height = rect.height;
+    if (wcData.length === 0) return;
+    const maxCount = wcData[0][1];
+    WordCloud(canvas, {
+      list: wcData.map(([w, c]) => [w, Math.max(18, Math.round((c / maxCount) * 76))]),
+      gridSize: 6, weightFactor: 1,
+      fontFamily: '"Microsoft JhengHei", "Noto Sans TC", sans-serif',
+      color: () => COLORS[Math.floor(Math.random() * COLORS.length)],
+      backgroundColor: 'transparent', rotateRatio: 0.3, shuffle: true,
+    });
+  }
+  Reveal.on('slidechanged', e => { if (e.currentSlide?.id === 'slide-wordcloud') setTimeout(drawWordCloud, 150); });
+})();
+</script>
+
+</body>
+</html>
